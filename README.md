@@ -2,7 +2,7 @@
 
 # TMURF - Tell Me yoU aRe Finish
 
-[![安装](https://img.shields.io/badge/GithubRaw-安装-black)](https://github.com/ChouChiu/TMURF/raw/refs/heads/master/tmurf.user.js)
+[![安装](https://img.shields.io/badge/GithubRaw-安装-black)](https://github.com/ChouChiu/TMURF/raw/refs/heads/master/tmurf.user.js) [![GreasyFork](https://img.shields.io/badge/GreasyFork-安装-black)](https://greasyfork.org/zh-CN/scripts/575386)
 
 TMURF 是一个 Tampermonkey 用户脚本，用于监听 Deepseek 聊天页面的 API 请求。当 AI 完成你的请求时，自动发送浏览器通知，让你可以放心切换到其他标签页工作，不再需要一直盯着屏幕等待。
 
