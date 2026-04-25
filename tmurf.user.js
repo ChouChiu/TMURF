@@ -9,6 +9,7 @@
 // @grant        GM_notification
 // @grant        GM_addStyle
 // @run-at       document-start
+// @license      Apache-2.0
 // ==/UserScript==
 
 (function () {
