@@ -10,7 +10,10 @@
 // @grant        GM_addStyle
 // @run-at       document-start
 // @license      Apache-2.0
+// @jshint       esversion: 11
 // ==/UserScript==
+
+/* jshint esversion: 11 */
 
 (function () {
   "use strict";
