@@ -10,8 +10,7 @@ TMURF (Tell Me yoU aRe Finish) 是一个 **基于 WXT 框架的 Chrome/Firefox �
 - 拦截 XMLHttpRequest 监听 /api/v0/chat/completion API 请求
 - 请求完成时发送浏览器通知（带去重和页面可见性检查）
 - 播放"叮咚"提示音（使用 Web Audio API）
-- 使用扩展 
-otifications API 发送系统通知
+- 使用扩展 notifications API 发送系统通知
 
 ## 关键文件
 
@@ -21,14 +20,14 @@ otifications API 发送系统通知
 | entrypoints/deepseek-interceptor.content.ts | Content Script（注入+事件监听+提示音） |
 | entrypoints/deepseek-main-world.ts | Main World Script（XHR 拦截） |
 | wxt.config.ts | WXT 扩展配置和 manifest 定义 |
-| 	sconfig.json | TypeScript 配置 |
+| tsconfig.json | TypeScript 配置 |
 | package.json | 项目配置和构建脚本 |
 | biome.json | Biome 格式化和 lint 配置 |
 | LICENSE | Apache 2.0 许可证 |
 
 ## 架构设计
 
-`
+```
 Content Script (isolated world)
   - runAt: document_start
   - 使用 injectScript 注入主世界脚本
@@ -45,7 +44,7 @@ Background Script (Service Worker)
   - 接收 Content Script 消息
   - 使用 browser.notifications API 发送系统通知
   - 管理通知权限
-`
+```
 
 ## 开发约定
 
@@ -55,12 +54,10 @@ Background Script (Service Worker)
 - **Biome**：代码格式化和 lint
 
 ### 代码模式
-- **Content Script**：使用 defineContentScript，配置 
-unAt: 'document_start'
+- **Content Script**：使用 defineContentScript，配置 runAt: 'document_start'
 - **Main World Script**：使用 defineUnlistedScript，通过 injectScript 注入
 - **Background Script**：使用 defineBackground，监听 browser.runtime.onMessage
-- **XHR 拦截**：保存原始 XMLHttpRequest.prototype.open/send，在 send 中监听 
-eadystatechange
+- **XHR 拦截**：保存原始 XMLHttpRequest.prototype.open/send，在 send 中监听 readystatechange
 - **去重机制**：COOLDOWN = 5000（5 秒冷却时间）
 - **页面可见性**：仅在 document.hidden === true 时发送通知
 - **提示音**：使用 Web Audio API 生成 1200Hz 正弦波
@@ -69,7 +66,7 @@ eadystatechange
 - 私有变量/方法使用 _tmurf 前缀（如 _tmurfMethod, _tmurfURL）
 - 常量使用 UPPER_SNAKE_CASE（如 COOLDOWN, API_PATH）
 - 函数使用 camelCase（如 playDing, sendNotification）
-- 自定义事件使用 	murf: 前缀（如 	murf:completion）
+- 自定义事件使用 tmurf: 前缀（如 tmurf:completion）
 
 ### 代码质量工具
 - **Biome**：用于代码格式化和 lint
@@ -120,3 +117,24 @@ eadystatechange
 
 - [README.md](README.md) - 完整安装步骤和使用说明
 - [WXT 文档](https://wxt.dev/) - API 参考和最佳实践
+
+## AI 代理快速参考
+
+### 添加新站点支持
+1. 复制 `entrypoints/deepseek-interceptor.content.ts` 为 `{site}-interceptor.content.ts`
+2. 复制 `entrypoints/deepseek-main-world.ts` 为 `{site}-main-world.ts`
+3. 修改 `matches` 数组为目标站点 URL
+4. 修改 `API_PATH` 常量为目标 API 路径
+5. 在 `wxt.config.ts` 中添加对应权限（如需要）
+
+### 扩展功能模式
+- **多站点支持**：每个站点独立的 content script + main world script 对
+- **自定义提示音**：修改 `playDing()` 函数中的频率和波形
+- **通知增强**：在 `sendNotification()` 中添加更多上下文信息
+- **配置界面**：使用 `browser.storage` API 存储用户偏好
+
+### 调试技巧
+- Content Script 日志：`[TMURF]` 前缀
+- 主世界脚本日志：`[TMURF] Main world` 前缀
+- Background Script 日志：`[TMURF] Background` 前缀
+- 使用 Chrome DevTools 的 Service Worker 调试面板查看 Background Script

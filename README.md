@@ -29,13 +29,13 @@ otifications API 发送系统通知
 
 ### 开发模式
 
-`bash
+```bash
 # Chrome 开发模式（自动打开浏览器）
 pnpm dev
 
 # Firefox 开发模式
 pnpm dev:firefox
-`
+```
 
 ## 使用方法
 
@@ -53,7 +53,7 @@ otifications API 发送系统通知
 
 ## 项目结构
 
-`
+```
 entrypoints/
 ├── background.ts                    # Background Service Worker
 ├── deepseek-interceptor.content.ts  # Content Script (隔离世界)
@@ -62,7 +62,7 @@ public/
 ├── icon-16.png                      # 扩展图标
 ├── icon-48.png
 └── icon-128.png
-`
+```
 
 ## 构建命令
 
