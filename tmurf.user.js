@@ -1,16 +1,15 @@
 // ==UserScript==
 // @name         TMURF - Tell Me yoU aRe Finish
 // @namespace    https://github.com/ChouChiu/TMURF
-// @version      1.0.0
+// @version      1.1.0
 // @description  当 AI 完成工作时通知你 - 适配 Deepseek
-// @author       Chou Chiu
+// @author       Chou Chiu, a2cheng
 // @match        https://chat.deepseek.com/*
 // @icon         https://raw.githubusercontent.com/ChouChiu/TMURF/refs/heads/master/icon.png
 // @grant        GM_notification
 // @grant        GM_addStyle
 // @run-at       document-start
 // @license      Apache-2.0
-// @jshint       esversion: 11
 // ==/UserScript==
 
 /* jshint esversion: 11 */
@@ -18,110 +17,125 @@
 (function () {
   "use strict";
 
-  // 保存原始的 XMLHttpRequest
-  const originalXHROpen = XMLHttpRequest.prototype.open;
-  const originalXHRSend = XMLHttpRequest.prototype.send;
+  const API_PATH = "/api/v0/chat/completion";
+  const COOLDOWN = 5000; // 5 秒冷却
 
-  // 通知去重：记录最近通知的时间戳
-  let lastNotificationTime = 0;
-  const NOTIFICATION_COOLDOWN = 5000; // 5秒内不重复通知
+  // 状态
+  let lastNotifyTime = 0;
+  let lastDingTime = 0;
+  let audioCtx = null;
+
+  // 保存原始 XHR 方法
+  const origOpen = XMLHttpRequest.prototype.open;
+  const origSend = XMLHttpRequest.prototype.send;
 
   /**
-   * 发送浏览器通知（带去重）
+   * 获取 AudioContext（懒加载 + 自动恢复）
    */
-  function sendNotification(title, body) {
-    // 如果页面可见（用户在当前窗口），则不发送通知
-    if (!document.hidden) {
-      return;
+  function getAudioCtx() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
+    if (audioCtx.state === "suspended") {
+      audioCtx.resume().catch(() => {});
+    }
+    return audioCtx;
+  }
+
+  /**
+   * 播放叮咚提示音（双音正弦波）
+   */
+  function playDing() {
+    const now = Date.now();
+    if (now - lastDingTime < COOLDOWN) return;
+    lastDingTime = now;
+
+    try {
+      const ctx = getAudioCtx();
+      if (ctx.state === "suspended") return;
+
+      const t = ctx.currentTime;
+      const v = 0.6;
+
+      // 叮
+      const osc1 = ctx.createOscillator();
+      const gain1 = ctx.createGain();
+      osc1.type = "sine";
+      osc1.frequency.setValueAtTime(1200, t);
+      gain1.gain.setValueAtTime(v, t);
+      gain1.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+      osc1.connect(gain1).connect(ctx.destination);
+      osc1.start(t);
+      osc1.stop(t + 0.28);
+
+      // 咚
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.type = "sine";
+      osc2.frequency.setValueAtTime(880, t + 0.09);
+      gain2.gain.setValueAtTime(0.001, t);
+      gain2.gain.setValueAtTime(v * 0.85, t + 0.09);
+      gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.54);
+      osc2.connect(gain2).connect(ctx.destination);
+      osc2.start(t + 0.09);
+      osc2.stop(t + 0.54);
+    } catch (e) {
+      console.log("[TMURF] 音效播放失败:", e.message);
+    }
+  }
+
+  /**
+   * 发送浏览器通知（带去重 + 页面可见性检查）
+   */
+  function notify(title, body) {
+    if (!document.hidden) return;
 
     const now = Date.now();
-    if (now - lastNotificationTime < NOTIFICATION_COOLDOWN) {
-      console.log("[TMURF] 通知冷却中，跳过");
-      return;
-    }
-    lastNotificationTime = now;
+    if (now - lastNotifyTime < COOLDOWN) return;
+    lastNotifyTime = now;
 
-    // 请求通知权限
     if (Notification.permission === "default") {
       Notification.requestPermission();
     }
 
-    // 优先使用浏览器原生通知（支持自定义图标）
     if (Notification.permission === "granted") {
       new Notification(title, {
-        body: body,
+        body,
         icon: "https://fe-static.deepseek.com/chat/favicon.svg",
       });
     } else if (typeof GM_notification !== "undefined") {
-      // 回退到 GM_notification（无图标支持）
-      GM_notification({
-        title: title,
-        text: body,
-        timeout: 5000,
-      });
+      GM_notification({ title, text: body, timeout: 5000 });
     }
   }
 
-  /**
-   * 判断是否是 Deepseek 的聊天完成 API 请求
-   */
-  function isChatAPIRequest(url) {
-    const targetPath = "/api/v0/chat/completion";
-    if (typeof url === "string") {
-      return url.includes(targetPath);
-    }
-    if (url instanceof URL) {
-      return url.pathname === targetPath;
-    }
-    return false;
-  }
-
-  // 拦截 XMLHttpRequest
+  // 拦截 XHR
   XMLHttpRequest.prototype.open = function (method, url, ...rest) {
     this._tmurfMethod = method;
     this._tmurfURL = url;
-    this._tmurfNotified = false; // 标记是否已发送通知
-    return originalXHROpen.apply(this, [method, url, ...rest]);
+    this._tmurfNotified = false;
+    return origOpen.apply(this, [method, url, ...rest]);
   };
 
   XMLHttpRequest.prototype.send = function (...args) {
-    const method = this._tmurfMethod?.toUpperCase();
-    const url = this._tmurfURL;
-
-    if (isChatAPIRequest(url) && method === "POST") {
-      const xhr = this;
-
-      // 监听流式响应
-      const originalOnReadyStateChange = this.onreadystatechange;
+    if (
+      this._tmurfMethod?.toUpperCase() === "POST" &&
+      typeof this._tmurfURL === "string" &&
+      this._tmurfURL.includes(API_PATH)
+    ) {
+      const origHandler = this.onreadystatechange;
       this.onreadystatechange = function () {
-        // readyState 4 表示请求完成
-        if (this.readyState === 4 && !this._tmurfNotified) {
-          if (this.status >= 200 && this.status < 300) {
-            this._tmurfNotified = true;
-            sendNotification(
-              "TMURF - 任务完成",
-              "Deepseek 已完成你的请求！"
-            );
-          }
+        if (this.readyState === 4 && !this._tmurfNotified && this.status >= 200 && this.status < 300) {
+          this._tmurfNotified = true;
+          notify("TMURF - 任务完成", "Deepseek 已完成你的请求！");
+          playDing();
         }
-        if (originalOnReadyStateChange) {
-          originalOnReadyStateChange.apply(this, arguments);
-        }
+        if (origHandler) origHandler.apply(this, arguments);
       };
     }
-
-    return originalXHRSend.apply(this, args);
+    return origSend.apply(this, args);
   };
 
-  // 页面加载时请求通知权限
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () => {
-      Notification.requestPermission();
-    });
-  } else {
-    Notification.requestPermission();
-  }
-
+  // 初始化：请求通知权限
+  Notification.requestPermission();
   console.log("[TMURF] 脚本已加载，正在监听 Deepseek 任务...");
 })();
