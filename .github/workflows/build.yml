@@ -41,12 +41,10 @@ jobs:
           pnpm zip
           pnpm zip:firefox
 
-      # 6. 上传 ZIP 产物（请根据实际输出目录调整路径）
-      #    常见的 WXT 输出位置是 .output/，也可能在 dist/ 下
+      # 6. 上传 ZIP 产物
       - name: Upload ZIP artifacts
         uses: actions/upload-artifact@v7
         with:
           include-hidden-files: true
           name: extension-packages
           path: .output/*.zip
-          archive: false
