@@ -3,8 +3,10 @@ name: Build Browser Extension
 on:
   push:
     branches:
-      - main
-      - master
+      - extension
+  pull_request:
+    branches:
+      - extension
   workflow_dispatch:
 
 jobs:
@@ -20,7 +22,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10         # 根据你项目使用的 pnpm 版本调整
+          version: latest         # 根据你项目使用的 pnpm 版本调整
 
       # 3. 配置 Node.js 并启用 pnpm 缓存
       - name: Setup Node.js
