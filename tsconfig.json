@@ -1,0 +1,12 @@
+{
+	"extends": ["./.wxt/tsconfig.json"],
+	"compilerOptions": {
+		"strict": true,
+		"target": "ES2020",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"skipLibCheck": true
+	}
+}

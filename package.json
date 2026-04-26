@@ -1,18 +1,31 @@
 {
-	"name": "tmruf",
-	"version": "1.0.0",
-	"description": "",
+	"name": "tmurf",
+	"version": "2.0.0",
+	"description": "当 AI 完成工作时通知你 - 适配 Deepseek 聊天页面",
 	"main": "index.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
+		"dev": "wxt",
+		"dev:firefox": "wxt -b firefox",
+		"build": "wxt build",
+		"build:firefox": "wxt build -b firefox",
+		"zip": "wxt zip",
+		"zip:firefox": "wxt zip -b firefox",
+		"postinstall": "wxt prepare",
 		"lint": "biome lint .",
-		"format": "biome format  --write ."
+		"format": "biome format --write ."
 	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
+	"keywords": [
+		"browser-extension",
+		"wxt",
+		"deepseek",
+		"notification"
+	],
+	"author": "Chou Chiu, a2cheng",
+	"license": "Apache-2.0",
 	"packageManager": "pnpm@10.33.2",
 	"devDependencies": {
-		"@biomejs/biome": "2.4.13"
+		"@biomejs/biome": "2.4.13",
+		"typescript": "^6.0.3",
+		"wxt": "^0.20.25"
 	}
 }
