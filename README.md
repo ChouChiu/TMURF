@@ -1,5 +1,8 @@
 > 脚本版在[ master 分支](https://github.com/ChouChiu/TMURF/tree/master)
 
+> [!TIP]
+> 现在只适配了 DeepSeek，欢迎各位大佬 PR 适配其他的 AI
+
 <div align="center">
     <h1>TMURF</h1>
     <img src="./public/icon.png" width="200" alt="TMURF 图标">
