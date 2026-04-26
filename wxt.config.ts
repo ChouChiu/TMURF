@@ -4,7 +4,7 @@ export default defineConfig({
 	manifest: {
 		name: "TMURF - Tell Me yoU aRe Finish",
 		description: "当 AI 完成工作时通知你 - 适配 Deepseek 聊天页面",
-		version: "2.0.0",
+		version: "1.0.0",
 		permissions: ["notifications"],
 		host_permissions: ["https://chat.deepseek.com/*"],
 		icons: {
