@@ -1,3 +1,5 @@
+> 脚本版在[ master 分支](https://github.com/ChouChiu/TMURF/tree/master)
+
 <div align="center">
     <h1>TMURF</h1>
     <img src="./public/icon.png" width="200" alt="TMURF 图标">
