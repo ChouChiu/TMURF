@@ -46,5 +46,6 @@ jobs:
       - name: Upload ZIP artifacts
         uses: actions/upload-artifact@v7
         with:
+          include-hidden-files: true
           name: extension-packages
           path: .output/*.zip
