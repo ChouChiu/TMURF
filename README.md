@@ -24,8 +24,8 @@ otifications API 发送系统通知
    - Chrome: pnpm build
    - Firefox: pnpm build:firefox
 4. 加载扩展：
-   - **Chrome**: 打开 chrome://extensions/ → 启用"开发者模式" → 点击"加载已解压的扩展程序" → 选择 ".output/chrome-mv3" 目录
-   - **Firefox**: 打开 about:debugging#/runtime/this-firefox → 点击"临时载入附加组件" → 选择 ".output/firefox-mv2/manifest.json"
+   - **Chrome**: 打开 `chrome://extensions/` → 启用"开发者模式" → 点击"加载已解压的扩展程序" → 选择 `.output/chrome-mv3` 目录
+   - **Firefox**: 打开 `about:debugging#/runtime/this-firefox` → 点击"临时载入附加组件" → 选择 `.output/firefox-mv2/manifest.json`
 
 ### 开发模式
 
