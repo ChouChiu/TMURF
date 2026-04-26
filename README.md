@@ -16,16 +16,16 @@ otifications API 发送系统通知
 
 ## 安装方法
 
-### 从源码安装（开发者模式）
+### 从 GitHub Actions 下载
 
-1. 克隆或下载本项目源码
-2. 安装依赖：pnpm install
-3. 构建扩展：
-   - Chrome: pnpm build
-   - Firefox: pnpm build:firefox
-4. 加载扩展：
-   - **Chrome**: 打开 `chrome://extensions/` → 启用"开发者模式" → 点击"加载已解压的扩展程序" → 选择 `.output/chrome-mv3` 目录
-   - **Firefox**: 打开 `about:debugging#/runtime/this-firefox` → 点击"临时载入附加组件" → 选择 `.output/firefox-mv2/manifest.json`
+1. 打开项目的 [Actions](https://github.com/ChouChiu/tmurf/actions) 页面
+2. 点击最新的 "Build Extension ZIP" 工作流
+3. 在页面底部的 "Artifacts" 区域，下载对应浏览器的扩展包：
+   - `tmurf-chrome` - Chrome 版本
+   - `tmurf-firefox` - Firefox 版本
+4. 安装扩展：
+   - **Chrome**: 打开 `chrome://extensions/` → 启用"开发者模式" → 直接将下载的 zip 文件拖入页面
+   - **Firefox**: 解压下载的 zip 文件 → 打开 `about:debugging#/runtime/this-firefox` → 点击"临时载入附加组件" → 选择解压目录中的 `manifest.json`
 
 ### 开发模式
 
