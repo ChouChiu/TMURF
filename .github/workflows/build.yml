@@ -49,5 +49,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}
-          path: .output/*.zip
+          path: .output/tmurf-*-${{ matrix.browser }}.zip
           retention-days: 30
