@@ -1,8 +1,7 @@
 {
 	"name": "tmurf",
-	"version": "2.0.0",
+	"version": "1.0.0",
 	"description": "当 AI 完成工作时通知你 - 适配 Deepseek 聊天页面",
-	"main": "index.js",
 	"scripts": {
 		"dev": "wxt",
 		"dev:firefox": "wxt -b firefox",
