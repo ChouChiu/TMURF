@@ -49,3 +49,4 @@ jobs:
           include-hidden-files: true
           name: extension-packages
           path: .output/*.zip
+          archive: false
