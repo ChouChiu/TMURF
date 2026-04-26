@@ -1,48 +1,48 @@
-name: Build Extension
+name: Build Browser Extension
 
 on:
   push:
-    branches: [extension]
-  pull_request:
-    branches: [extension]
+    branches:
+      - main
+      - master
   workflow_dispatch:
 
 jobs:
   build:
-    name: Build ${{ matrix.browser }} Extension
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        browser: [chrome, firefox]
+
     steps:
+      # 1. 检出代码
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2. 安装 pnpm
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10.33.2
+          version: 10         # 根据你项目使用的 pnpm 版本调整
 
+      # 3. 配置 Node.js 并启用 pnpm 缓存
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "pnpm"
+          node-version: '24'   # 根据项目需要选择 Node 版本
+          cache: 'pnpm'
 
+      # 4. 安装依赖
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build ${{ matrix.browser }} extension
+      # 5. 构建 Chrome (zip) 与 Firefox (zip:firefox) 两个版本
+      - name: Build extension packages
         run: |
-          if [ "${{ matrix.browser }}" = "chrome" ]; then
-            pnpm zip
-          else
-            pnpm zip:firefox
-          fi
+          pnpm zip
+          pnpm zip:firefox
 
-      - name: Upload extension zip
+      # 6. 上传 ZIP 产物（请根据实际输出目录调整路径）
+      #    常见的 WXT 输出位置是 .output/，也可能在 dist/ 下
+      - name: Upload ZIP artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: tmurf-${{ matrix.browser }}-*
+          name: extension-packages
           path: .output/*.zip
-          retention-days: 30
