@@ -7,7 +7,7 @@
         <a href="https://greasyfork.org/zh-CN/scripts/575386">
             <img src="https://img.shields.io/badge/GreasyFork-安装-red" alt="从 GreasyFork 安装"></a>
     </p>
-    <p>TMURF（<strong>T</strong>ell <strong>Me</strong> yo<strong>U</strong> a<strong>R</strong>e <strong>F</strong>inish） 是一个 Tampermonkey 用户脚本，用于监听 Deepseek 聊天页面的 API 请求。当 AI 完成你的请求时，自动发送浏览器通知，让你可以放心切换到其他标签页工作，不再需要一直盯着屏幕等待</p>
+    <p>TMURF（<strong>T</strong>ell <strong>Me</strong> yo<strong>U</strong> a<strong>R</strong>e <strong>F</strong>inish） 是一个 Tampermonkey 用户脚本，用于监听 Deepseek 聊天页面的 API 请求。当 AI 完成你的请求时，自动发送浏览器通知并播放音效，让你可以放心切换到其他标签页工作，不再需要一直盯着屏幕等待</p>
 </div>
 
 ## 功能特性
@@ -22,7 +22,7 @@
 
 1. 在 Deepseek 聊天页面发送你的消息
 2. 切换到其他标签页或窗口
-3. 当 AI 回复完成时，你会收到一条浏览器通知
+3. 当 AI 回复完成时，你会收到一条浏览器通知并听到“叮咚”
 
 ## 技术实现
 
