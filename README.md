@@ -14,8 +14,7 @@
 - **自动通知**：拦截 Deepseek `/api/v0/chat/completion API` 请求，在响应完成后发送通知
 - **智能去重**：5 秒冷却时间，避免重复通知
 - **页面感知**：仅在当前标签页不可见（document.hidden）时发送通知，避免打扰正在使用的用户
-- **扩展通知 API**：使用浏览器扩展 
-otifications API 发送系统通知
+- **扩展通知 API**：使用浏览器扩展 notifications API 发送系统通知
 - **提示音**：使用 Web Audio API 生成 1200Hz "叮咚"提示音
 - **跨浏览器支持**：同时支持 Chrome (MV3) 和 Firefox (MV2)
 
